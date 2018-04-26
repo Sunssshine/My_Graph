@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>help/adding_poss.htm</file>
+        <file>help/help.htm</file>
+        <file>help/dijkstra_algo.htm</file>
+        <file>help/euler_cycle.htm</file>
+        <file>help/file_graph_create_and_save.htm</file>
+        <file>help/hand_graph_create.htm</file>
+        <file>help/list_graph_create.htm</file>
+        <file>help/graph_poss.htm</file>
+        <file>help/euler_cycle_theory.htm</file>
+        <file>help/euler_cycle_use.htm</file>
+        <file>help/dijkstra_algo_theory.htm</file>
+        <file>help/dijkstra_algo_use.htm</file>
+        <file>help/rce.png</file>
+        <file>help/rcn.png</file>
+        <file>help/gravitation_graph.htm</file>
+        <file>help/algorythms.htm</file>
+    </qresource>
+</RCC>

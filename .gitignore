@@ -1,0 +1,10 @@
+
+*.o
+.gitignore.txt
+*.stash
+*.txt
+*.gph
+
+/debug
+/release
+

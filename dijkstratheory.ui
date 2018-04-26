@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DijkstraTheory</class>
+ <widget class="QWidget" name="DijkstraTheory">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>441</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>640</width>
+    <height>410</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>640</width>
+    <height>441</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTextBrowser" name="textBrowser">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>641</width>
+     <height>441</height>
+    </rect>
+   </property>
+   <property name="html">
+    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; color:#222222; background-color:#ffffff;&quot;&gt;Алгори́тм Де́йкстры&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222; background-color:#ffffff;&quot;&gt;  — алгоритм на графах, изобретённый нидерландским учёным Эдсгером Дейкстрой в 1959 году. Находит кратчайшие пути от одной из вершин графа до всех остальных. Алгоритм работает только для графов без ребер отрицательного веса Алгоритм широко применяется в программировании и технологиях, например, его используют протоколы маршрутизации OSFP и IS-IS.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a name=&quot;Неформальное_объяснение&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Linux Libertine,Georgia,Times,serif'; font-size:11pt; color:#000000;&quot;&gt;Н&lt;/span&gt;&lt;span style=&quot; font-family:'Linux Libertine,Georgia,Times,serif'; font-size:11pt; color:#000000;&quot;&gt;еформальное объяснение&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:9px; margin-bottom:9px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#ffffff;&quot;&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222; background-color:#ffffff;&quot;&gt;Каждой вершине из&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;V&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; сопоставим метку — минимальное известное расстояние от этой вершины до &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;a&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt;. Алгоритм работает пошагово — на каждом шаге он «посещает» одну вершину и пытается уменьшать метки. Работа алгоритма завершается, когда все вершины посещены.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:9px; margin-bottom:9px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#ffffff;&quot;&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; color:#222222;&quot;&gt;Инициализация&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt;. Метка самой вершины &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;a&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; полагается равной 0, метки остальных вершин — бесконечности. Это отражает то, что расстояния от &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;a&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; до других вершин пока неизвестны. Все вершины графа помечаются как непосещённые.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:9px; margin-bottom:9px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#ffffff;&quot;&gt;&lt;a name=&quot;Шаг&quot;&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; color:#222222;&quot;&gt;Ш&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; color:#222222;&quot;&gt;аг алгоритма&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt;. Если все вершины посещены, алгоритм завершается. В противном случае, из ещё не посещённых вершин выбирается вершина &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt;, имеющая минимальную метку. Мы рассматриваем всевозможные маршруты, в которых &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; является предпоследним пунктом. Вершины, в которые ведут рёбра из &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt;, назовём &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-style:italic; color:#222222;&quot;&gt;соседями&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; этой вершины. Для каждого соседа вершины &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt;, кроме отмеченных как посещённые, рассмотрим новую длину пути, равную сумме значений текущей метки &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; и длины ребра, соединяющего &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; с этим соседом. Если полученное значение длины меньше значения метки соседа, заменим значение метки полученным значением длины. Рассмотрев всех соседей, пометим вершину &lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; font-weight:600; font-style:italic; color:#222222;&quot;&gt;u&lt;/span&gt;&lt;span style=&quot; font-family:'sans-serif'; font-size:11pt; color:#222222;&quot;&gt; как посещённую и повторим шаг алгоритма.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
