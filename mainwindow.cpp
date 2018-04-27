@@ -103,6 +103,31 @@ Edge *MainWindow::wayFromTo(Node *source, Node *dest)
     return nullptr;
 }
 
+void MainWindow::setSource()
+{
+    if(algoSource)
+    {
+        algoSource->isVisited = false;
+        algoSource->update();
+    }
+    algoSource = choosedNode;
+    algoSource->isVisited = true;
+    algoSource->update();
+}
+
+void MainWindow::setDestination()
+{
+    Node * tmp = nullptr;
+    if(algoDest)
+        tmp = algoDest;
+
+    algoDest = choosedNode;
+    algoDest->update();
+
+    if(tmp)
+        tmp->update();
+}
+
 void MainWindow::startDijkstra()
 {
     foreach(Node * node, nodes)
@@ -804,6 +829,14 @@ void MainWindow::resetEulerGraphFinder()
     ui->nextStepButton->hide();
     ui->prevStepButton->hide();
     ui->pushButton_2->hide();
+    foreach(Node * tmp, listOfMoves)
+    {
+        foreach(Edge * buf, tmp->edgeList)
+        {
+            buf->isVisited = false;
+        }
+        tmp->isVisited = false;
+    }
     isAuto = false;
     currentMove = 0;
     ui->label->clear();
@@ -812,6 +845,8 @@ void MainWindow::resetEulerGraphFinder()
 
 bool MainWindow::findEulerCycle()
 {
+    resetEulerGraphFinder();
+    resetFordFalkersonAlgo();
     stack.clear();
     listOfMoves.clear();
     QString buf = "";
@@ -885,55 +920,68 @@ void MainWindow::on_clearButton_clicked()
     nodes.clear();
     ui->nextStepButton->setDisabled(true);
     resetEulerGraphFinder();
+    resetFordFalkersonAlgo();
+    isFordFalkerson = false;
 
 }
 
 void MainWindow::on_prevStepButton_clicked()
 {
-
-    if(!ui->prevStepButton->isEnabled() || !ui->prevStepButton->isVisible())
-        return;
-    foreach(Edge * edge, listOfMoves[currentMove]->edgeList)
+    if(isFordFalkerson)
+        nextStep_FordFalkerson();
+    else
     {
-
-        if((listOfMoves[currentMove+1] == edge->sourceNode()) ||
-                (listOfMoves[currentMove+1] == edge->destNode()))
+        if(!ui->prevStepButton->isEnabled() || !ui->prevStepButton->isVisible())
+            return;
+        foreach(Edge * edge, listOfMoves[currentMove]->edgeList)
         {
-            edge->isVisited = true;
+
+            if((listOfMoves[currentMove+1] == edge->sourceNode()) ||
+                    (listOfMoves[currentMove+1] == edge->destNode()))
+            {
+                edge->isVisited = true;
+            }
         }
-    }
-    currentMove++;
-    if(currentMove+1 == listOfMoves.size())
-    {
-        ui->prevStepButton->setDisabled(true);
-    }
-    if(currentMove)
-    {
-        ui->nextStepButton->setDisabled(false);
+        currentMove++;
+        if(currentMove+1 == listOfMoves.size())
+        {
+            ui->prevStepButton->setDisabled(true);
+        }
+        if(currentMove)
+        {
+            ui->nextStepButton->setDisabled(false);
+        }
     }
 }
 
 void MainWindow::on_nextStepButton_clicked()
 {
-    if(!ui->nextStepButton->isEnabled())
-        return;
 
-    foreach(Edge * edge, listOfMoves[currentMove]->edgeList)
+    if(isFordFalkerson)
+        prevStep_FordFalkerson();
+    else
     {
-        if((listOfMoves[currentMove-1] == edge->sourceNode()) ||
-                (listOfMoves[currentMove-1] == edge->destNode()))
+
+        if(!ui->nextStepButton->isEnabled())
+            return;
+
+        foreach(Edge * edge, listOfMoves[currentMove]->edgeList)
         {
-            edge->isVisited = false;
+            if((listOfMoves[currentMove-1] == edge->sourceNode()) ||
+                    (listOfMoves[currentMove-1] == edge->destNode()))
+            {
+                edge->isVisited = false;
+            }
         }
-    }
-    currentMove--;
-    if(currentMove == 0)
-    {
-        ui->nextStepButton->setDisabled(true);
-    }
-    if(currentMove+1 != listOfMoves.size())
-    {
-        ui->prevStepButton->setEnabled(true);
+        currentMove--;
+        if(currentMove == 0)
+        {
+            ui->nextStepButton->setDisabled(true);
+        }
+        if(currentMove+1 != listOfMoves.size())
+        {
+            ui->prevStepButton->setEnabled(true);
+        }
     }
 }
 
@@ -941,6 +989,7 @@ void MainWindow::on_commandLinkButton_clicked()
 {
     if(checkEulerGraph())
     {
+        resetEulerGraphFinder();
         findEulerCycle();
         ui->prevStepButton->setVisible(true);
         ui->nextStepButton->setVisible(true);
@@ -979,4 +1028,361 @@ void MainWindow::on_checkBox_clicked(bool checked)
 void MainWindow::on_pushButton_clicked()
 {
     createGraph();
+}
+
+bool MainWindow::findPath(QList <Node*> & path, QList <Edge*> & way, Node * current, Node * destination)
+{
+    current->isVisited = true;
+
+    QList <Edge*> usedPaths;
+
+    do
+    {
+        Node * nextNode = nullptr;
+        Edge * wayToNextNode = nullptr;
+        foreach(Edge * currEdge, current->edgeList)
+        {
+            bool next = false;
+            foreach(Edge * checkPath, usedPaths)
+            {
+                if(checkPath == currEdge)
+                    next = true;
+
+            }
+
+            if(next)
+                continue;
+
+            if(currEdge->current_flow >= currEdge->weight)
+                continue;
+
+            if((currEdge->sourceNode() == current))
+            {
+                if(currEdge->destNode()->isVisited == true)
+                    continue;
+
+                if(currEdge->arrowToDest)
+                {
+
+                    if(nextNode == nullptr)
+                    {
+                        nextNode = currEdge->destNode();
+                        wayToNextNode = currEdge;
+                    }
+
+                    int curr_available_capacity = currEdge->weight-currEdge->current_flow;
+                    int next_available_capacity = wayToNextNode->weight-wayToNextNode->current_flow;
+                    if(curr_available_capacity > next_available_capacity)
+                    {
+                        nextNode = currEdge->destNode(); // ЮБИЛЕЙНАЯ СТРОКА - КОСАРЬ, СТАВЬ ЛАЙК И ПОДПИСЫВАЙСЯ, НАЖМИ НА КОЛОКОЛЬЧИК ПЕРЕДАЮ ПРИВЕТ РОДИТЕЛЯМ, НЕОБХОДИМО ВЫЗВАТЬ ПСИХИАТРА, ЗАЧЕМ ТЫ ПРОДОЛЖАЕШЬ ЭТО ЧИТАТЬ? ТУТ УЖЕ НИЧЕГО НЕТ, ХВАТИТ, ВСЁ, КОНЕЦ.                                  ЭТО КОНЕЦ                               ????? Втф, окей, это пасхалка, ты доволен? Ты дочитал до пасхалки, гц чувак.                                                                                                                                      Мур мур мур чик чирик кар, собачка говорит "Му"
+                        wayToNextNode = currEdge;
+                    }
+                }
+
+//                if(currEdge->arrowToSource)
+//                {
+//                    int curr_available_capacity = currEdge->weight-currEdge->current_flow;
+//                    int next_available_capacity = wayToNextNode->weight-wayToNextNode->current_flow;
+//                    if(curr_available_capacity < next_available_capacity)
+//                    {
+//                        nextNode = currEdge->destNode();
+//                        wayToNextNode = currEdge;
+//                    }
+//                }
+            }
+
+            if((currEdge->destNode() == current))
+            {
+                if(currEdge->sourceNode()->isVisited == true)
+                    continue;
+
+
+                if(currEdge->arrowToSource)
+                {
+                    if(nextNode == nullptr)
+                    {
+                        nextNode = currEdge->sourceNode();
+                        wayToNextNode = currEdge;
+                    }
+
+                    int curr_available_capacity = currEdge->weight-currEdge->current_flow;
+                    int next_available_capacity = wayToNextNode->weight-wayToNextNode->current_flow;
+                    if(curr_available_capacity > next_available_capacity)
+                    {
+                        nextNode = currEdge->sourceNode(); // ЮБИЛЕЙНАЯ СТРОКА - КОСАРЬ, СТАВЬ ЛАЙК И ПОДПИСЫВАЙСЯ, НАЖМИ НА КОЛОКОЛЬЧИК ПЕРЕДАЮ ПРИВЕТ РОДИТЕЛЯМ, НЕОБХОДИМО ВЫЗВАТЬ ПСИХИАТРА, ЗАЧЕМ ТЫ ПРОДОЛЖАЕШЬ ЭТО ЧИТАТЬ? ТУТ УЖЕ НИЧЕГО НЕТ, ХВАТИТ, ВСЁ, КОНЕЦ.                                  ЭТО КОНЕЦ                               ????? Втф, окей, это пасхалка, ты доволен? Ты дочитал до пасхалки, гц чувак.                                                                                                                                      Мур мур мур чик чирик кар, собачка говорит "Му"
+                        wayToNextNode = currEdge;
+                    }
+                }
+
+//                if(currEdge->arrowToDest)
+//                {
+//                    int curr_available_capacity = currEdge->weight-currEdge->current_flow;
+//                    int next_available_capacity = wayToNextNode->weight-wayToNextNode->current_flow;
+//                    if(curr_available_capacity < next_available_capacity)
+//                    {
+//                        nextNode = currEdge->sourceNode();
+//                        wayToNextNode = currEdge;
+//                    }
+//                }
+            }
+        }
+
+        if(nextNode)
+        {
+            if(nextNode == destination)
+            {
+                path.push_front(nextNode);
+                way.push_front(wayToNextNode);
+                current->isVisited = false;
+                return 1;
+            }
+
+            if(findPath(path, way, nextNode, destination))
+            {
+                path.push_front(nextNode);
+                way.push_front(wayToNextNode);
+                current->isVisited = false;
+                return 1;
+            }
+        }
+        else
+            break;
+
+        usedPaths.push_back(wayToNextNode);
+
+    }
+    while(true);
+    current->isVisited = false;
+    return 0;
+}
+
+
+
+
+void MainWindow::nextStep_FordFalkerson()
+{
+    if(!ui->prevStepButton->isEnabled())
+        return;
+
+
+
+    ui->nextStepButton->setDisabled(false);
+
+    if(currentMove == allPaths[currentPath].size())
+    {
+        foreach(Node * item, allPaths[currentPath])
+        {
+            item->isVisited = false;
+            item->update();
+        }
+
+        foreach(Edge * itemm, allWays[currentPath])
+        {
+            itemm->isVisited = false;
+            itemm->current_flow+=bottleHecks[currentPath];
+            itemm->update();
+        }
+
+        currentMove = 0;
+        currentPath++;
+
+        if(currentPath == allPaths.size())
+        {
+            ui->prevStepButton->setDisabled(true);
+            return;
+        }
+        return;
+    }
+
+    //if(allWays)
+    allWays[currentPath][currentMove]->isVisited = true;
+    allWays[currentPath][currentMove]->update();
+
+    allPaths[currentPath][currentMove]->isVisited = true;
+    allPaths[currentPath][currentMove]->update();
+
+    currentMove++;
+
+}
+
+void MainWindow::prevStep_FordFalkerson()
+{
+    ui->prevStepButton->setEnabled(true);
+
+    if(currentMove == 0)
+    {
+        currentPath--;
+        foreach(Node * item, allPaths[currentPath])
+        {
+            item->isVisited = true;
+            item->update();
+        }
+
+        foreach(Edge * itemm, allWays[currentPath])
+        {
+            itemm->isVisited = true;
+            itemm->current_flow-=bottleHecks[currentPath];
+            itemm->update();
+        }
+
+        currentMove = allPaths[currentPath].size();
+        return;
+    }
+
+    currentMove--;
+    //if(allWays)
+    allWays[currentPath][currentMove]->isVisited = false;
+    allWays[currentPath][currentMove]->update();
+
+    allPaths[currentPath][currentMove]->isVisited = false;
+    allPaths[currentPath][currentMove]->update();
+
+
+    if(!currentPath && !currentMove)
+        ui->nextStepButton->setDisabled(true);
+
+
+}
+
+void MainWindow::resetFordFalkersonAlgo()
+{
+    ui->horizontalSlider->hide();
+    ui->nextStepButton->hide();
+    ui->prevStepButton->hide();
+    ui->pushButton_2->hide();
+    isAuto = false;
+
+    for(int i = 0; i<allWays.size(); i++)
+    {
+        for(int j = 0; j<allWays[i].size(); j++)
+        {
+            allWays[i][j]->isVisited = false;
+            allWays[i][j]->current_flow = 0;
+        }
+    }
+
+    for(int i = 0; i<allPaths.size(); i++)
+    {
+        for(int j = 0; j<allPaths[i].size(); j++)
+        {
+            allPaths[i][j]->isVisited = false;
+        }
+    }
+
+    allPaths.clear();
+    allWays.clear();
+
+
+    if(algoSource)
+    {
+        algoSource->isVisited = false;
+        algoSource->update();
+    }
+    Node * tmp = algoDest;
+    algoSource = nullptr;
+    algoDest = nullptr;
+    if(tmp)
+        tmp->update();
+
+    bottleHecks.clear();
+
+    isFordFalkerson = false;
+
+    currentMove = 0;
+    currentPath = 0;
+
+    ui->label->clear();
+    ui->prevStepButton->setEnabled(true);
+}
+
+void MainWindow::on_start_ford_falkerson_clicked()
+{
+    if(!algoDest)
+    {
+        QMessageBox::information(this, "Внимание","Не назначена точка стока!");
+        return;
+    }
+
+    if(!algoSource)
+    {
+        QMessageBox::information(this, "Внимание","Не назначена точка истока!");
+        return;
+    }
+
+
+    allPaths.clear();
+    allWays.clear();
+
+    Node * tmp1 = algoDest;
+    Node * tmp2 = algoSource;
+
+    resetEulerGraphFinder();
+    resetFordFalkersonAlgo();
+
+    algoDest = tmp1;
+    algoSource = tmp2;
+
+    QList <Node*> path;
+    QList <Edge*> way;
+
+
+    while(findPath(path, way, algoSource, algoDest))
+    {
+        //path.push_front(algoSource);
+
+        int bottleHeck = INFINITY;
+
+        foreach(Edge * item, way)
+        {
+            if(item->weight - item->current_flow < bottleHeck)
+                bottleHeck = item->weight - item->current_flow;
+        }
+
+        foreach(Edge * item, way)
+        {
+            item->current_flow+=bottleHeck;
+        }
+
+        allPaths.push_back(path);
+        allWays.push_back(way);
+        bottleHecks.push_back(bottleHeck);
+
+        path.clear();
+        way.clear();
+    }
+
+    resetEulerGraphFinder();
+
+    for(int i = 0; i<allWays.size(); i++)
+    {
+        for(int j = 0; j<allWays[i].size(); j++)
+        {
+            allWays[i][j]->current_flow = 0;
+        }
+    }
+
+    algoSource->isVisited = true;
+    algoSource->update();
+
+    int result = 0;
+
+    for(int i = 0; i<bottleHecks.size(); i++)
+        result+=bottleHecks[i];
+
+    QString resultStr;
+    resultStr += "Максимальный поток из (" + algoSource->text + ") в (" + algoDest->text + ") равен: " + QString::number(result);
+
+    QMessageBox::information(this, "Results Ford Falkerson", resultStr);
+
+    ui->label->setText(resultStr);
+
+    isFordFalkerson = true;
+
+    if(!result)
+        ui->prevStepButton->setDisabled(true);
+    ui->label->setVisible(true);
+    ui->prevStepButton->setVisible(true);
+    ui->nextStepButton->setVisible(true);
+    ui->pushButton_2->setVisible(true);
+    ui->horizontalSlider->setVisible(true);
 }

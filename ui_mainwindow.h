@@ -51,6 +51,7 @@ public:
     QSlider *horizontalSlider;
     QCheckBox *checkBox;
     QPushButton *pushButton;
+    QCommandLinkButton *start_ford_falkerson;
     QStatusBar *statusbar;
     QMenuBar *menubar;
     QMenu *menu;
@@ -59,9 +60,9 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(893, 494);
+        MainWindow->resize(893, 530);
         MainWindow->setMinimumSize(QSize(893, 494));
-        MainWindow->setMaximumSize(QSize(893, 510));
+        MainWindow->setMaximumSize(QSize(893, 530));
         aboutAction = new QAction(MainWindow);
         aboutAction->setObjectName(QStringLiteral("aboutAction"));
         actionExit = new QAction(MainWindow);
@@ -98,20 +99,20 @@ public:
         clearButton->setGeometry(QRect(800, 330, 71, 21));
         prevStepButton = new QPushButton(centralwidget);
         prevStepButton->setObjectName(QStringLiteral("prevStepButton"));
-        prevStepButton->setGeometry(QRect(720, 410, 71, 21));
+        prevStepButton->setGeometry(QRect(720, 450, 71, 21));
         nextStepButton = new QPushButton(centralwidget);
         nextStepButton->setObjectName(QStringLiteral("nextStepButton"));
-        nextStepButton->setGeometry(QRect(630, 410, 80, 21));
+        nextStepButton->setGeometry(QRect(630, 450, 80, 21));
         pushButton_2 = new QPushButton(centralwidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
-        pushButton_2->setGeometry(QRect(800, 410, 71, 21));
+        pushButton_2->setGeometry(QRect(800, 450, 71, 21));
         label = new QLabel(centralwidget);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(20, 420, 591, 21));
         label->setFont(font);
         horizontalSlider = new QSlider(centralwidget);
         horizontalSlider->setObjectName(QStringLiteral("horizontalSlider"));
-        horizontalSlider->setGeometry(QRect(630, 430, 241, 16));
+        horizontalSlider->setGeometry(QRect(630, 470, 241, 16));
         horizontalSlider->setMinimum(-1000);
         horizontalSlider->setMaximum(-50);
         horizontalSlider->setSliderPosition(-525);
@@ -122,6 +123,9 @@ public:
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
         pushButton->setGeometry(QRect(870, 330, 20, 21));
+        start_ford_falkerson = new QCommandLinkButton(centralwidget);
+        start_ford_falkerson->setObjectName(QStringLiteral("start_ford_falkerson"));
+        start_ford_falkerson->setGeometry(QRect(630, 400, 241, 41));
         MainWindow->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -174,6 +178,7 @@ public:
         pushButton->setWhatsThis(QApplication::translate("MainWindow", "<html><head/><body><p>\320\232\320\275\320\276\320\277\320\272\320\260 \320\264\320\273\321\217 \320\277\320\265\321\200\320\265\321\201\320\276\320\267\320\264\320\260\320\275\320\270\321\217 \320\263\321\200\320\260\321\204\320\260 \320\270\320\267 \320\277\320\276\320\273\321\217 \320\262\320\262\320\276\320\264\320\260 \320\274\320\270\320\275\321\203\321\217 \320\276\321\202\320\272\321\200\321\213\321\202\320\270\320\265 \320\270\320\267 \321\204\320\260\320\271\320\273\320\260</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_WHATSTHIS
         pushButton->setText(QApplication::translate("MainWindow", "*", Q_NULLPTR));
+        start_ford_falkerson->setText(QApplication::translate("MainWindow", "FORD FALKERSON", Q_NULLPTR));
         menu->setTitle(QApplication::translate("MainWindow", "Menu", Q_NULLPTR));
     } // retranslateUi
 

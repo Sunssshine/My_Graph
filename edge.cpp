@@ -123,12 +123,32 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
     arrowheadToSource->angle = angle;
     painter->setBrush(Qt::white);
     painter->setPen(Qt::white);
+
+    if(((angle*180/M_PI) > 65) && ((angle*180/M_PI) < 115))
     painter->drawRect(sourcePoint.x()+(destPoint.x()-sourcePoint.x())/2-5,
-                      sourcePoint.y()+(destPoint.y()-sourcePoint.y())/2-5, 10, 10);
+                      sourcePoint.y()+(destPoint.y()-sourcePoint.y())/2-14, 10, 10);
+
+    if(((angle*180/M_PI) > -115) && ((angle*180/M_PI) < -65))
+    painter->drawRect(sourcePoint.x()+(destPoint.x()-sourcePoint.x())/2-5,
+                      sourcePoint.y()+(destPoint.y()-sourcePoint.y())/2-14, 10, 10);
+
+    //QString drawMe = QString::fromStdString(std::to_string(weight));
+
+    QString drawMe;
+
+    if(current_flow > 0)
+    {
+        drawMe = QString::fromStdString(std::to_string(current_flow));
+        drawMe+=" / ";
+        drawMe+=QString::fromStdString(std::to_string(weight));
+    }
+    else
+        drawMe = QString::fromStdString(std::to_string(weight));
+
     painter->setPen(QPen(Qt::magenta, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawText(QPointF(sourcePoint.x()+(destPoint.x()-sourcePoint.x())/2-3,
-                              sourcePoint.y()+(destPoint.y()-sourcePoint.y())/2+4),
-                      QString::fromStdString(std::to_string(weight)));
+                              sourcePoint.y()+(destPoint.y()-sourcePoint.y())/2-5),
+                      drawMe);
     arrowheadToDest->update();
     arrowheadToSource->update();
 

@@ -59,6 +59,8 @@ private:
     QAction * renameAction;
     QAction * connectAction;
     QAction * deleteNodeAction;
+    QAction * setSource;
+    QAction * setDestination;
 };
 
 #endif // NODE_H

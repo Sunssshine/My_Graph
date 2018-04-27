@@ -20,6 +20,7 @@ public:
     QPointF sourcePoint;
     QPointF destPoint;
     int weight = 2;
+    int current_flow = 0;
     bool isVisited = false;
 
     void adjust();

@@ -49,12 +49,30 @@ public:
     QList <Node*> listOfMoves;
     QGraphicsTextItem * hello;
     int ticksCounter = 0;
+    bool findPath(QList<Node *> &path, QList<Edge *> & way, Node *current, Node *destination);
+    Node * algoSource = nullptr;
+    Node * algoDest = nullptr;
+
+    QList <QList <Node*>> allPaths;
+    QList <QList <Edge*>> allWays;
+    QList <int> bottleHecks;
+
+    void nextStep_FordFalkerson();
+    void prevStep_FordFalkerson();
+    void resetFordFalkersonAlgo();
+
+    bool isFordFalkerson = false;
+
+    int currentPath = 0;
+
 
     Edge * wayFromTo(Node * source, Node * dest);
 
     int currentMove = 0;
 
 public slots:
+    void setSource();
+    void setDestination();
     void startDijkstra();
     bool renameNode();
     void letsCreateNode(QPointF coords);
@@ -102,6 +120,8 @@ private slots:
     void on_checkBox_clicked(bool checked);
 
     void on_pushButton_clicked();
+
+    void on_start_ford_falkerson_clicked();
 
 private:
     int timerId = 0;

@@ -14,11 +14,15 @@ Node::Node(MainWindow *graphWidget, QString name)
     connectAction = new QAction ("Connect");
     renameAction = new QAction("Rename");
     dijkstraStart = new QAction("Dijkstra");
+    setSource = new QAction("Set as Source");
+    setDestination = new QAction("Set as Destination");
     connectAction->setCheckable(true);
     QObject::connect(deleteNodeAction, &QAction::triggered, graph, &MainWindow::removeNode);
     QObject::connect(connectAction, &QAction::triggered, graph, &MainWindow::connectNodes);
     QObject::connect(renameAction, &QAction::triggered, graph, &MainWindow::renameNode);
     QObject::connect(dijkstraStart, &QAction::triggered, graph, &MainWindow::startDijkstra);
+    QObject::connect(setSource, &QAction::triggered, graph, &MainWindow::setSource);
+    QObject::connect(setDestination, &QAction::triggered, graph, &MainWindow::setDestination);
     text = name;
 
 }
@@ -136,6 +140,22 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         gradient.setColorAt(0, QColor(Qt::darkCyan).light(120));
         myPen = QPen(Qt::white, 2);
     }
+    else if (isVisited)
+    {
+        gradient.setCenter(3, 3);
+        gradient.setFocalPoint(3, 3);
+        gradient.setColorAt(1, QColor(Qt::magenta).light(120));
+        gradient.setColorAt(0, QColor(Qt::darkMagenta).light(120));
+        myPen = QPen(Qt::white, 2);
+    }
+    else if (graph->algoDest == this)
+    {
+        gradient.setCenter(3, 3);
+        gradient.setFocalPoint(3, 3);
+        gradient.setColorAt(1, QColor(Qt::black).light(120));
+        gradient.setColorAt(0, QColor(Qt::red).light(120));
+        myPen = QPen(Qt::white, 2);
+    }
     else
     {
         myPen = QPen(Qt::white, 2);
@@ -190,6 +210,8 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     menu.addAction(connectAction);
     menu.addAction(renameAction);
     menu.addAction(dijkstraStart);
+    menu.addAction(setSource);
+    menu.addAction(setDestination);
     menu.exec(event->screenPos());
     connectAction->setEnabled(true);
     if(graph->firstConnectingNode)
