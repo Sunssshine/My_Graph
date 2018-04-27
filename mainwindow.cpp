@@ -987,9 +987,9 @@ void MainWindow::on_nextStepButton_clicked()
 
 void MainWindow::on_commandLinkButton_clicked()
 {
+    resetEulerGraphFinder();
     if(checkEulerGraph())
     {
-        resetEulerGraphFinder();
         findEulerCycle();
         ui->prevStepButton->setVisible(true);
         ui->nextStepButton->setVisible(true);
